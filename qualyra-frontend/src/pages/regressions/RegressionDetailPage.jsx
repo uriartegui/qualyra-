@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getRegression, executeItem, completeRegression } from '../../api/regressions'
 import { FileText, Pencil, Trash2, Flag, Check, X, ClipboardList, ArrowLeft } from 'lucide-react'
+import useAuthStore from '../../store/authStore'
 
 export default function RegressionDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
+  const canComplete = user?.role !== 'VIEWER'
   const [regression, setRegression] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -69,7 +72,7 @@ export default function RegressionDetailPage() {
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-red-200 rounded-lg hover:bg-red-50 text-red-500">
             <Trash2 size={14} /> Excluir
           </button>
-          {!completed && (
+          {!completed && canComplete && (
             <button
               onClick={handleComplete}
               disabled={loading || regression.pending > 0}

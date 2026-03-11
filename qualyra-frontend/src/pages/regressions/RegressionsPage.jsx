@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom'
 import { getRegressions, createRegression } from '../../api/regressions'
 import { getTemplates } from '../../api/templates'
 import { Plus, CheckCircle, XCircle, Clock, PlayCircle } from 'lucide-react'
+import useAuthStore from '../../store/authStore'
 
 export default function RegressionsPage() {
+  const { user } = useAuthStore()
+  const canCreate = user?.role !== 'VIEWER'
   const [regressions, setRegressions] = useState([])
   const [templates, setTemplates] = useState([])
   const [showForm, setShowForm] = useState(false)
@@ -41,10 +44,12 @@ export default function RegressionsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Regressões</h1>
           <p className="text-gray-500 mt-1">Execute e acompanhe os testes de regressão.</p>
         </div>
-        <button onClick={() => setShowForm(true)}
-          className="flex items-center gap-1.5 bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700">
-          <Plus size={16} /> Nova regressão
-        </button>
+        {canCreate && (
+          <button onClick={() => setShowForm(true)}
+            className="flex items-center gap-1.5 bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700">
+            <Plus size={16} /> Nova regressão
+          </button>
+        )}
       </div>
 
       {showForm && (
